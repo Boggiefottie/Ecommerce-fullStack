@@ -52,4 +52,22 @@ const registerProduct = asyncHandler(async (req, res) => {
       )
     );
 });
-export { registerProduct };
+const searchProducts = asyncHandler(async (req, res) => {
+  const { item } = req.query;
+
+  if (!item) {
+    throw new ApiError(400, "Search query is required");
+  }
+  const products = await Product.find({
+    $text: { $search: item },
+  });
+  if (!products.length) {
+    throw new ApiError(400, "cannot search required itme");
+  }
+  console.log(products);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, products, "product searched succesfully"));
+});
+
+export { registerProduct, searchProducts };
