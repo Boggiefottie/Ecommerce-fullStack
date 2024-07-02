@@ -18,9 +18,9 @@ const productSchema = new Schema(
       type: String,
       required: true,
     },
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+    ManufacturingOwner: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }
