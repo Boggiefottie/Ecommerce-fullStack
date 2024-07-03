@@ -10,11 +10,16 @@ const registerProduct = asyncHandler(async (req, res) => {
     productCategory,
     productDescription,
     ManufacturingOwner,
+    price,
   } = req.body;
   if (
-    [productName, productCategory, productDescription, ManufacturingOwner].some(
-      (field) => field?.trim() === ""
-    )
+    [
+      productName,
+      productCategory,
+      productDescription,
+      ManufacturingOwner,
+      price,
+    ].some((field) => field?.trim() === "")
   ) {
     throw new ApiError(400, "All fields are required");
   }
@@ -34,6 +39,7 @@ const registerProduct = asyncHandler(async (req, res) => {
     productDescription,
     productImage: productImage?.url,
     ManufacturingOwner,
+    price,
   });
   const createdProduct = await Product.findById(product._id);
   if (!createdProduct) {
