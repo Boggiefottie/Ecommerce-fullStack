@@ -26,13 +26,11 @@ const uploadOnCloudinary = async (localFilePath) => {
     });
     console.log("Cloudinary upload response:", response);
 
-    // Delete the local file after upload
     fs.unlinkSync(localFilePath);
     return response;
   } catch (error) {
     console.error("Cloudinary upload error:", error);
 
-    // Delete the local file if an error occurred
     fs.unlinkSync(localFilePath);
     return null;
   }

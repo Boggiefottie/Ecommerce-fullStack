@@ -3,6 +3,10 @@ import { Router } from "express";
 import {
   registerProduct,
   searchProducts,
+  filterProduct,
+  sortProduct,
+  pagination,
+  review,
 } from "../controllers/product.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
@@ -18,4 +22,8 @@ router.route("/registerProduct").post(
   registerProduct
 );
 router.route("/searchProducts").get(searchProducts);
+router.route("/filterProducts").get(filterProduct);
+router.route("/sortProducts").get(sortProduct);
+router.route("/paginate").get(pagination);
+router.route("/postReview").post(review);
 export default router;

@@ -1,4 +1,5 @@
 import { Product } from "../models/product.model.js";
+import { Review } from "../models/review.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -75,5 +76,69 @@ const searchProducts = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, products, "product searched succesfully"));
 });
+const filterProduct = asyncHandler(async (req, res) => {
+  const { price, productCategory } = req.query;
+  if (!price) {
+    throw new ApiError(400, "item is required");
+  }
 
-export { registerProduct, searchProducts };
+  const products = await Product.find({
+    $or: [
+      {
+        price: { $lte: price },
+        productCategory: { $regex: new RegExp(productCategory, "i") },
+      },
+    ],
+  });
+
+  console.log(products);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, products, "Successfully filtered product"));
+});
+const sortProduct = asyncHandler(async (req, res) => {
+  const { sortBy } = req.query;
+  let sortOrder;
+  if (sortBy === "highToLow") {
+    sortOrder = { price: -1 };
+  } else if (sortBy === "lowToHigh") {
+    sortOrder = { price: 1 };
+  } else {
+    sortOrder = {};
+  }
+  const products = await Product.find().sort(sortOrder);
+  console.log(products);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, products, "Products sorted successfully"));
+});
+const pagination = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 6 } = req.query;
+  const options = {
+    page: parseInt(page, 10),
+    limit: parseInt(limit, 10),
+  };
+  const aggregate = Product.aggregate();
+  const result = await Product.aggregatePaginate(aggregate, options);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, "Paginated successfully"));
+});
+const review = asyncHandler(async (req, res) => {
+  const { review } = req.body;
+  const reviews = await Review.create({
+    review,
+  });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, reviews, "Review created successfully"));
+});
+
+export {
+  registerProduct,
+  searchProducts,
+  filterProduct,
+  sortProduct,
+  pagination,
+  review,
+};
